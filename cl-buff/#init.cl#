@@ -1,0 +1,182 @@
+;gnu clisp  2.49.60
+
+(defun sum-list (lst &optional (acc 0))
+  (cond ((null lst) acc)
+	(t (sum-list (cdr lst) (+ acc (car lst))))))
+
+(defun sum-list-r (lst)
+    (cond
+        ((null lst) 0)
+        ((atom lst) lst)
+        (t (+ (sum-list-r (car lst)) (sum-list-r (cdr lst))))))
+
+(defun dec (num)
+    (- num 1))
+
+(defun inc (num)
+    (+ num 1))
+
+(defun what (inc)
+    (inc inc))
+
+(defun tail (x)
+    (cond ((null (cdr x)) (car x))
+          (t (tail (cdr x)))))
+
+(defun range-> (max &key (min 0) (step 1))
+  (cond ((<= max min) (list max))
+	(t (cons max (range-> (- max step) :min min :step step)))))
+
+(defun range-< (max &key (min 0) (step 1))
+  (labels ((range-< (acc)
+	  (cond ((>= acc max) (list acc))
+	  (t (cons acc (range-< (+ acc step)))))))
+    (range-< min)))
+
+(defun range ((from 0) &key (to 0) (step 1))
+    (cond ((<= from to) (range-< to :min from :step step))
+          (t (range-> from :min to :step step))))
+
+(defun include? (el lst)
+    (cond ((null lst) nil)
+          ((eq el (car lst)) t)
+          (t (include? el (cdr lst)))))
+
+(defun remove-el (el lst)
+    (cond ((null lst) nil)
+        ((eq el (car lst)) (remove-el el (cdr lst)))
+        (t (cons (car lst) (remove-el el (cdr lst))))))
+
+(defun set-of (lst)
+    (cond ((null lst) nil)
+        (t (cons (car lst) (set-of (remove-el (car lst) (cdr lst)))))))
+
+(defun unio (s1 s2)
+    (set-of (append s1 s2)))
+
+(defun intsec (s1 s2)
+    (cond 
+        ((null s1) nil)
+        ((include? (car s1) s2) (cons (car s1) (intsec (cdr s1) s2)))
+        (t (intsec (cdr s1) s2))))
+
+(defun diff (s1 s2)
+  (cond ((null s1) nil)
+	((include? (car s1) s2) (diff (cdr s1) s2))
+	(t (cons (car s1) (diff (cdr s1) s2)))))
+
+(defun sim-diff (s1 s2)
+  (unio (diff s1 s2) (diff s2 s1)))
+
+(defun eq-set (s1 s2)
+  (cond ((null s1) t)
+	((include? (car s1) s2) (eq-set (cdr s1) s2))
+	(t nil)))
+
+(defun eq-set2 (s1 s2)
+  (null (sim-diff s1 s2)))
+
+(defun mkpair (a lst)
+  (cond ((null lst) nil)
+	(t (cons (list a (car lst)) (mkpair a (cdr lst))))))
+
+(defun decart (s1 s2)
+  (cond ((null s1) nil)
+	(t (append (mkpair (car s1) s2) (decart (cdr s1) s2)))))
+
+(defun add-elt (a lsts)
+  (cond ((null lsts) nil)
+	(t (cons (cons a (car lsts)) (add-elt a (cdr lsts))))))
+
+(defun all-subsets (s)
+  (cond ((null s) (list nil))
+	(t (let ((ss (all-subsets (cdr s))))
+            (append ss (add-elt (car s) ss))))))
+
+(defun zip (l1 l2)
+  (cond ((or (null l1) (null l2)) nil)
+	(t (cons (car l1) (cons (car l2) (zip (cdr l1) (cdr l2)))))))
+
+(defun try-let ()
+    (let ((result ()))
+         (let ((a 10) (b 15))
+             (push (+ a b) result))
+         (let* ((a 10) (b (+ a 15)))
+             (push (+ a b) result))
+         result))
+    
+(defun try-dolist (lst)
+    (let ((sum 0))
+        (dolist (i lst sum)
+            (setq sum (+ i sum)))))
+
+(defun try-dotimes (n)
+    (let ((sum 0))
+        (dotimes (i n sum)
+            (setq sum (+ i sum)))))
+
+(defun try-loop (lim)
+    (let ((i 1))
+         (loop
+          (cond ((> i lim) (return i))
+                (t (setq i (inc i )))))))
+
+(defun try-if (n)
+    (if (= 0 (mod n 2))
+        'even
+        'odd))
+    
+(defun try-when (cnd)
+    (when cnd
+        '(1 2 3)))
+    
+(defun try-unless (cnd)
+    (unless cnd
+        '(1 2 3)))
+
+(defun insert-sort (lst)
+    )
+
+((lambda ()
+   (labels
+       ((t-sum-list    () (sum-list '(1 2 3 4 5)))
+        (t-sum-list-r  () (sum-list-r '(1 (2 (3 4)))))
+        (t-dec         () (dec 10))
+        (t-inc         () (inc 10))
+        (t-what        () (what 10))
+        (t-tail        () (tail '(1 2 3 4 5 67)))
+        (t-range->     () (range-> 10 5))
+        (t-range-<     () (range-< 5 10))
+        (t-range-to-up () (range 10 5))
+        (t-range-to-dw () (range 5 10))
+        (t-include?    () (include? 7 (range 10 :to 5)))
+        (t-remove-el   () (remove-el 8 (range 5 :to 10)))
+        (t-set-of      () (set-of '(a b a b a b ab ab ab)))
+        (t-unio        () (unio '(a b c d) '(d e a j)))
+        (t-intsec      () (intsec '(a b c d) '(d e a j)))
+        (t-diff        () (diff '(a b c d) '(d e a j)))
+        (t-sim-diff    () (sim-diff '(a s d f g) '(d f g h j k)))
+        (t-eq-set      () (eq-set '(1 3 2) '(3 2 1)))
+        (t-eq-set2     () (eq-set2 '(1 3 2) '(3 2 1)))
+        (t-mkpair      () (mkpair 5 '(1 2 3 4 5)))
+        (t-decart      () (decart '(1 2 3 4) '(X Y)))
+        (t-add-elt     () (add-elt 4 '((1 2 3))))
+        (t-all-subsets () (all-subsets '(1 2 3)))
+        (t-zip         () (zip '(x y z) '(a b c)))
+        (t-try-let     () (try-let))
+        (t-try-dolist  () (try-dolist '(1 2 3 4 5)))
+        (t-try-dotimes () (try-dotimes 5))
+        (t-try-loop    () (try-loop 8))
+        (t-try-if      () (try-if 11))
+        (t-try-when    () (try-when t))
+        (t-try-unless  () (try-unless nil)))
+    (loop for i in 
+          (list
+           (t-try-let)
+           (t-try-dolist)
+           (t-try-dotimes)
+           (t-try-loop)
+           (t-try-if)
+           (t-try-when)
+           (t-try-unless))
+         do (print i)))))
