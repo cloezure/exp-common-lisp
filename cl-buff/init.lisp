@@ -34,25 +34,27 @@
     (range-< min)))
 
 (defun range ((from 0) &key (to 0) (step 1))
-    (cond ((<= from to) (range-< to :min from :step step))
-          (t (range-> from :min to :step step))))
+  (cond ((<= from to) (range-< to :min from :step step))
+	(t (range-> from :min to :step step))))
 
 (defun include? (el lst)
-    (cond ((null lst) nil)
-          ((eq el (car lst)) t)
-          (t (include? el (cdr lst)))))
+  (cond
+    ((null lst) nil)
+    ((eq el (car lst)) t)
+    (t (include? el (cdr lst)))))
 
 (defun remove-el (el lst)
-    (cond ((null lst) nil)
-        ((eq el (car lst)) (remove-el el (cdr lst)))
-        (t (cons (car lst) (remove-el el (cdr lst))))))
+  (cond
+    ((null lst) nil)
+    ((eq el (car lst)) (remove-el el (cdr lst)))
+    (t (cons (car lst) (remove-el el (cdr lst))))))
 
 (defun set-of (lst)
     (cond ((null lst) nil)
-        (t (cons (car lst) (set-of (remove-el (car lst) (cdr lst)))))))
+	  (t (cons (car lst) (set-of (remove-el (car lst) (cdr lst)))))))
 
 (defun unio (s1 s2)
-    (set-of (append s1 s2)))
+  (set-of (append s1 s2)))
 
 (defun intsec (s1 s2)
     (cond 
@@ -257,7 +259,8 @@
          (list x y (+ x y)))
     ; analog ->
     ((lambda (x y)
-         (list x y (+ x y))) 111 222))
+       (list x y (+ x y)))
+     111 222))
 
 (defun y-combinator (f lst)
     (funcall f lst f))
@@ -280,7 +283,8 @@
 (defun my-mapcar (f lst)
     (reverse
         (reduce (lambda (acc x)
-                        (cons (funcall f x) acc)) lst :initial-value nil)))
+		  (cons (funcall f x) acc))
+		lst :initial-value nil)))
 
 (defun my-remove-if (p lst)
     (reverse
