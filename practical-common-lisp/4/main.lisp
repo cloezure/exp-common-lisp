@@ -34,6 +34,13 @@
 ; Special Operators
 ;(if x (format t "yes") (format t "no"))
 ;(if test-form then-form [ else-form ])
-;
+
+
+
+
+(defvar a 'a)
+(defmacro ab (x y z) 42)
+
+(print (ab pof rif paf))
 
 
