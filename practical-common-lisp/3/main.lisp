@@ -1,7 +1,5 @@
-;;;; list
-(list 1 2 3 4) ;== '(1 2 3 4)
-
-(print '(lambda () (list "hi")))
+;;; list
+(list 1 2 3 4)
 
 ;;; plist
 (list :a 1 :b 2 :c 3)
@@ -17,7 +15,10 @@
 
 ;;; This creates a new entry 
 (defun make-cd (title artist rating ripped)
-  (list :title title :artist artist :rating rating :ripped ripped))
+  (list :title title
+	:artist artist
+	:rating rating
+	:ripped ripped))
 
 (make-cd "This is not love" "Kino" 10 t)
 
@@ -26,13 +27,17 @@
 (defvar *db* nil)
 
 ;;; This adds a new entry in *db*
-(defun add-record (cd) (push cd *db* ))
+(defun add-record (cd)
+  (push cd *db*))
 
-(add-record (make-cd "Stay with me" "Faces" 8 t))
+(add-record
+ (make-cd "Stay with me" "Faces" 8 t))
 
-(add-record (make-cd "Requiem In D Minor" "Amadeus" 10 t))
+(add-record
+ (make-cd "Requiem In D Minor" "Amadeus" 10 t))
 
-(add-record (make-cd "Down with the Sickness" "Disturbed" 10 t))
+(add-record
+ (make-cd "Down with the Sickness" "Disturbed" 10 t))
 
 ;;; DOLIST take el in *db* and move the value in cd
 ;;; like a foreach
@@ -43,9 +48,9 @@
 (format t "Pre-load dump~%")
 (dump-db)
 
-;; Or like this
-;; ->
-(defun dump-db ()
+;;; Or like this
+;;; ->
+(defun dump-db2 ()
   (format t "~{~{~a:~10t~a~%~}~%~}" *db*))
 
 (defun prompt-read (prompt)
@@ -61,7 +66,6 @@
     (y-or-n-p "Ripped")))
 
 ;;; LOOP makes repeat then does not return
-
 (defun add-cds ()
   (loop (add-record (prompt-for-cd))
         (if (not (y-or-n-p "Another?")) (return))))
@@ -89,7 +93,6 @@
 (dump-db)
 
 (remove-if-not #'evenp '(1 2 3 4 5 6 7 8))
-
 (remove-if-not (lambda (x) (= 0 (mod x 2 ))) '(1 2 3 4 5 6 7 8))
 
 (defun select-by-artist (artist)
@@ -100,7 +103,7 @@
 (defun select (select-fn)
   (remove-if-not select-fn *db*))
 
-(defun artist-select(artist)
+(defun artist-select (artist)
   #'(select (lambda (cd) (equal (getf cd :artist) artist))))
 
 (defun where (&key title artist rating (ripped nil ripped-p))

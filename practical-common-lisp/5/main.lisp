@@ -7,7 +7,11 @@
   (format t "Summing ~d and ~d.~%" x y)
   (+ x y))
 
-(defun foo (a b &optional c d) (list a b c d))
+(defun foo (a b &optional c d)
+  (list a b c d))
+
+(defun foo2 (a &optional (b 10))
+  (list a b))
 
 ;;(foo 1 2)     ==> (1 2 NIL NIL)
 ;;(foo 1 2 3)   ==> (1 2 3 NIL)
@@ -18,18 +22,15 @@
 
 ;;(defun make-rectangle (width &optional (height width)) ...)
 
-
-(defun foo (a b &optional (c 3 c-supplied-p))
+(defun foo3 (a b &optional (c 3 c-supplied-p))
   (list a b c c-supplied-p))
 
 ;;; This gives results like this:
-
 ;;(foo 1 2)   ==> (1 2 3 NIL)
 ;;(foo 1 2 3) ==> (1 2 3 T)
 ;;(foo 1 2 4) ==> (1 2 4 T)
 
 ;;; REST
-
 ;;(defun format (stream string &rest values) ...)
 ;;(defun + (&rest numbers) ...) 
 
@@ -49,7 +50,7 @@
 ;;(defun foo (&key ((:apple a)) ((:box b) 0) ((:charlie c) 0 c-supplied-p))
 ;;  (list a b c c-supplied-p))
 
-;(foo :apple 10 :box 20 :charlie 30) ==> (10 20 30 T)
+;;(foo :apple 10 :box 20 :charlie 30) ==> (10 20 30 T)
 
 (defun foo (&rest rest &key a b c) (list rest a b c))
 

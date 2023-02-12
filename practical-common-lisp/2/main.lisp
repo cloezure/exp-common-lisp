@@ -11,6 +11,6 @@
 
 (hello-world)
 
-;; Cursed
+;;; Cursed
 ;(load "main.cl")
 ;(load (compile-file "main.cl"))
