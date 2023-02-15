@@ -52,7 +52,8 @@
 
 ;;(foo :apple 10 :box 20 :charlie 30) ==> (10 20 30 T)
 
-(defun foo (&rest rest &key a b c) (list rest a b c))
+(defun foo (&rest rest &key a b c)
+  (list rest a b c))
 
 ;;(foo :a 1 :b 2 :c 3)  ==> ((:A 1 :B 2 :C 3) 1 2 3)
 
@@ -62,3 +63,27 @@
       (when (> (* i j) n)
         (return-from foo (list i j))))))
 
+(defun plot (fn min max step)
+  (loop for i from min to max by step do
+    (loop repeat (funcall fn i) do (format t "*"))
+    (format t "~%")))
+
+(defparameter *plot-data* '(0 4 1/2))
+(defparameter *plot-data-fn* `(exp ,@*plot-data*))
+
+;;; bad
+(plot
+ (first *plot-data-fn*)
+ (second *plot-data-fn*)
+ (third *plot-data-fn*)
+ (fourth *plot-data-fn*))
+
+;;; good
+(apply #'plot *plot-data-fn*)
+
+;;; or
+
+(apply #'plot #'exp *plot-data*)
+
+
+(plot #'(lambda (x) (* 2 x)) 0 10 1)
